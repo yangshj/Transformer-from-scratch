@@ -151,12 +151,12 @@ class TransformerBlock(nn.Module):
 class TransformerLanguageModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.d_model = d_model
-        self.context_length = context_length
-        self.num_heads = num_heads
-        self.num_blocks = num_blocks
-        self.dropout = dropout
-        self.max_token_value = max_token_value
+        self.d_model = d_model  # 模型维度/嵌入维度
+        self.context_length = context_length  # 上下文长度/最大序列长度
+        self.num_heads = num_heads  # 注意力头的数量
+        self.num_blocks = num_blocks  # Transformer块的数量
+        self.dropout = dropout  # dropout率
+        self.max_token_value = max_token_value  # 词汇表大小
 
         # token嵌入层
         self.token_embedding_lookup_table = nn.Embedding(
@@ -184,7 +184,7 @@ class TransformerLanguageModel(nn.Module):
         position_encoding_lookup_table[:, 0::2] = torch.sin(position * div_term)  # 偶数位置用sin
         position_encoding_lookup_table[:, 1::2] = torch.cos(position * div_term)  # 奇数位置用cos
 
-        # 根据输入长度截取位置编码
+        # 截取实际需要的位置编码
         position_embedding = position_encoding_lookup_table[:T, :].to(device)
 
         # token嵌入+位置编码
@@ -210,7 +210,7 @@ class TransformerLanguageModel(nn.Module):
     def generate(self, idx, max_new_tokens):
         # 自回归生成文本
         for _ in range(max_new_tokens):
-            # 裁剪输入以适应上下文长度
+            # 1. 裁剪输入到context_length
             idx_crop = idx[:, -self.context_length:]
             # 获取预测
             logits, loss = self(idx_crop)
@@ -230,7 +230,7 @@ model = model.to(device)  # 将模型移动到指定设备
 
 # 获取批数据
 def get_batch(split: str):
-    # 根据split选择数据集
+    # 选择训练集或验证集
     data = train_data if split == 'train' else val_data
     # 随机选择起始位置
     idxs = torch.randint(low=0, high=len(data) - context_length, size=(batch_size,))
