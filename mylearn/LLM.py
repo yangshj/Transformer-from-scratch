@@ -21,14 +21,14 @@ TORCH_SEED = 1337  # 随机种子
 torch.manual_seed(TORCH_SEED)  # 设置随机种子
 
 # 如果数据文件不存在则下载
-if not os.path.exists('data/sales_textbook.txt'):
+if not os.path.exists('../data/sales_textbook.txt'):
     url = 'https://huggingface.co/datasets/goendalf666/sales-textbook_for_convincing_and_selling/raw/main/sales_textbook.txt'
-    os.makedirs('data', exist_ok=True)  # 创建数据目录
+    os.makedirs('../data', exist_ok=True)  # 创建数据目录
     with open('data/sales_textbook.txt', 'w') as f:
         f.write(requests.get(url).text)  # 下载并保存文本
 
 # 读取文本数据
-with open('data/sales_textbook.txt', 'r', encoding='utf-8') as f:
+with open('../data/sales_textbook.txt', 'r', encoding='utf-8') as f:
     text = f.read()
 
 # 使用tiktoken进行token化
